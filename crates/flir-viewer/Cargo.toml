@@ -42,5 +42,6 @@ assets = [
     ["../../packaging/linux/flir-one-pc.desktop", "usr/share/applications/", "644"],
     ["assets/icon.png", "usr/share/icons/hicolor/256x256/apps/flir-one-pc.png", "644"],
     ["../../packaging/linux/70-flir-one.rules", "usr/lib/udev/rules.d/", "644"],
+    ["../../packaging/linux/io.github.sadenki.flir_one_pc.metainfo.xml", "usr/share/metainfo/", "644"],
     ["../../README.md", "usr/share/doc/flir-one-pc/", "644"],
 ]

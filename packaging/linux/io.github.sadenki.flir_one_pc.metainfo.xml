@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Fiche affichée par les logithèques (GNOME Logiciels, Discover…). -->
+<component type="desktop-application">
+  <id>io.github.sadenki.flir_one_pc</id>
+  <metadata_license>MIT</metadata_license>
+  <project_license>MIT OR Apache-2.0</project_license>
+  <name>FLIR One PC</name>
+  <summary>Caméra thermique FLIR One Gen 3 sur l'ordinateur</summary>
+  <description>
+    <p>
+      Visionneuse thermique en direct pour la caméra FLIR One Gen 3
+      (version USB-C / Android) : image thermique en couleurs, photo visible,
+      températures, point chaud et points de mesure.
+    </p>
+    <ul>
+      <li>Diagnostic par injection : seul ce qui chauffe ressort</li>
+      <li>Captures image et vidéo, valeurs brutes en CSV</li>
+      <li>Accès à la caméra sans droits root (règle udev fournie)</li>
+    </ul>
+  </description>
+  <launchable type="desktop-id">flir-one-pc.desktop</launchable>
+  <url type="homepage">https://github.com/Sadenki/flir-one-pc</url>
+  <url type="bugtracker">https://github.com/Sadenki/flir-one-pc/issues</url>
+  <developer id="io.github.sadenki">
+    <name>Cyrille</name>
+  </developer>
+  <screenshots>
+    <screenshot type="default">
+      <caption>Écran d'attente avant le branchement de la caméra</caption>
+      <image>https://raw.githubusercontent.com/Sadenki/flir-one-pc/main/docs/ecran-attente.png</image>
+    </screenshot>
+  </screenshots>
+  <categories>
+    <category>Graphics</category>
+    <category>Science</category>
+  </categories>
+  <provides>
+    <binary>flir-viewer</binary>
+    <modalias>usb:v09CBp1996*</modalias>
+  </provides>
+  <content_rating type="oars-1.1"/>
+  <releases>
+    <release version="0.1.0" date="2026-10-11"/>
+  </releases>
+</component>
