@@ -5,6 +5,9 @@
 //! can be pinned with a click, and a reference image taken before power is
 //! injected can be subtracted so only what heats up stands out.
 
+// Pas de fenêtre console sous Windows (sauf en build debug, pour les journaux).
+#![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
+
 mod avi;
 mod camera_thread;
 mod holders;
