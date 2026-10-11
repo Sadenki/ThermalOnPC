@@ -1,0 +1,11 @@
+[Desktop Entry]
+Type=Application
+Name=FLIR One PC
+GenericName=Caméra thermique
+Comment=Image thermique en direct et mesure de température avec une FLIR One Gen 3
+Exec=flir-viewer
+Icon=flir-one-pc
+Terminal=false
+Categories=Graphics;Science;Utility;
+Keywords=FLIR;thermique;thermal;caméra;
+StartupWMClass=FLIR One PC

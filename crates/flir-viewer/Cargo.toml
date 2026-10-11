@@ -1,0 +1,46 @@
+[package]
+name = "flir-viewer"
+description = "Live thermal viewer for the FLIR One Gen 3"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+rust-version.workspace = true
+
+[dependencies]
+flir-proto.workspace = true
+flir-usb.workspace = true
+log.workspace = true
+env_logger.workspace = true
+anyhow.workspace = true
+eframe = { version = "0.36", features = ["persistence"] }
+serde = { version = "1", features = ["derive"] }
+image = { version = "0.25", default-features = false, features = ["jpeg", "png"] }
+colorous = "1"
+chrono = { version = "0.4", default-features = false, features = ["clock"] }
+sysinfo = { version = "0.33", default-features = false, features = ["system"] }
+rfd = "0.15"
+
+[build-dependencies]
+winresource = "0.1"
+
+# Paquet Debian/Ubuntu : `cargo deb -p flir-viewer` (voir README).
+[package.metadata.deb]
+name = "flir-one-pc"
+maintainer = "Cyrille <37807781+Sadenki@users.noreply.github.com>"
+copyright = "2026, les contributeurs de flir-one-pc"
+section = "graphics"
+priority = "optional"
+depends = "$auto"
+recommends = "xdg-desktop-portal"
+extended-description = """\
+Visionneuse thermique en direct pour la caméra FLIR One Gen 3 (USB-C / Android) : \
+températures, point chaud, points de mesure, captures image et vidéo. \
+Installe une règle udev pour utiliser la caméra sans droits root."""
+maintainer-scripts = "../../packaging/linux/debian/"
+assets = [
+    ["target/release/flir-viewer", "usr/bin/", "755"],
+    ["../../packaging/linux/flir-one-pc.desktop", "usr/share/applications/", "644"],
+    ["assets/icon.png", "usr/share/icons/hicolor/256x256/apps/flir-one-pc.png", "644"],
+    ["../../packaging/linux/70-flir-one.rules", "usr/lib/udev/rules.d/", "644"],
+    ["../../README.md", "usr/share/doc/flir-one-pc/", "644"],
+]

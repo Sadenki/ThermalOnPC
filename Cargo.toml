@@ -1,0 +1,22 @@
+[workspace]
+resolver = "2"
+members = ["crates/flir-proto", "crates/flir-usb", "crates/flir-viewer"]
+
+[workspace.package]
+version = "0.1.0"
+edition = "2021"
+license = "MIT OR Apache-2.0"
+rust-version = "1.95"
+
+[workspace.dependencies]
+flir-proto = { path = "crates/flir-proto" }
+flir-usb = { path = "crates/flir-usb" }
+thiserror = "2"
+log = "0.4"
+env_logger = "0.11"
+anyhow = "1"
+
+# libusb with a fix for devices that list alternate settings out of order
+# (see vendor/libusb1-sys/libusb/libusb/os/windows_winusb.c).
+[patch.crates-io]
+libusb1-sys = { path = "vendor/libusb1-sys" }

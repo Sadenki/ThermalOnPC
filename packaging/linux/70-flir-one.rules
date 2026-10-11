@@ -1,0 +1,2 @@
+# FLIR One Gen 3 (USB-C / Android) : accès sans root pour flir-one-pc.
+SUBSYSTEM=="usb", ATTRS{idVendor}=="09cb", ATTRS{idProduct}=="1996", MODE="0666", TAG+="uaccess"

@@ -1,0 +1,10 @@
+[package]
+name = "flir-proto"
+description = "FLIR One Gen 2/3 frame parsing and radiometry (no I/O)"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+rust-version.workspace = true
+
+[dependencies]
+thiserror.workspace = true

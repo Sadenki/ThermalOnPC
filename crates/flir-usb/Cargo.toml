@@ -1,0 +1,18 @@
+[package]
+name = "flir-usb"
+description = "USB transport for the FLIR One Gen 3 (USB-C / Android) camera"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+rust-version.workspace = true
+
+[dependencies]
+flir-proto.workspace = true
+rusb = { version = "0.9.4", features = ["vendored"] }
+thiserror.workspace = true
+zip = { version = "2", default-features = false, features = ["deflate"] }
+log.workspace = true
+
+[dev-dependencies]
+env_logger.workspace = true
+anyhow.workspace = true
