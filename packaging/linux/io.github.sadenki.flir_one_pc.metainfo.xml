@@ -19,15 +19,15 @@
     </ul>
   </description>
   <launchable type="desktop-id">flir-one-pc.desktop</launchable>
-  <url type="homepage">https://github.com/Sadenki/flir-one-pc</url>
-  <url type="bugtracker">https://github.com/Sadenki/flir-one-pc/issues</url>
+  <url type="homepage">https://github.com/Sadenki/ThermalOnPC</url>
+  <url type="bugtracker">https://github.com/Sadenki/ThermalOnPC/issues</url>
   <developer id="io.github.sadenki">
     <name>Cyrille</name>
   </developer>
   <screenshots>
     <screenshot type="default">
       <caption>Écran d'attente avant le branchement de la caméra</caption>
-      <image>https://raw.githubusercontent.com/Sadenki/flir-one-pc/main/docs/ecran-attente.png</image>
+      <image>https://raw.githubusercontent.com/Sadenki/ThermalOnPC/main/docs/ecran-attente.png</image>
     </screenshot>
   </screenshots>
   <categories>
