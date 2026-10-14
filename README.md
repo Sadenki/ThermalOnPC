@@ -2,14 +2,14 @@
 
 Logiciel libre (Rust) pour utiliser une caméra thermique **FLIR One Gen 3**
 (version Android / USB-C) sur un ordinateur : vidéo en direct et mesure de
-température. Windows, macOS et Linux.
+température, sous Windows et Linux.
 
 > Statut : testé sur Windows avec la caméra (via UsbDk) : flux, températures
 > (constantes lues dans la caméra) et toutes les fonctions ci-dessous.
 > Linux : testé le 11/10/2026 sur Ubuntu 24.04 et Debian avec la caméra
 > (sans pilote, règle udev ci-dessous).
-> macOS : la caméra est détectée et ouverte, mais le flux d'images ne démarre
-> pas (voir « macOS : limite actuelle » plus bas).
+> macOS n'est pas pris en charge : le système bloque la requête USB qui
+> démarre le flux d'images (détails dans [docs/architecture.md](docs/architecture.md)).
 
 ![Image thermique décodée à côté de la photo visible](docs/premieres-images-gen3.png)
 
@@ -50,9 +50,6 @@ Détails du protocole et feuille de route : [docs/architecture.md](docs/architec
 - **Linux** : donner l'accès sans root avec une règle udev, par exemple
   `/etc/udev/rules.d/70-flir-one.rules` :
   `SUBSYSTEM=="usb", ATTRS{idVendor}=="09cb", ATTRS{idProduct}=="1996", MODE="0666"`
-- **macOS** (Intel ou Apple Silicon M1/M2…) : aucun pilote à installer.
-  Il faut les outils de développement d'Apple (`xcode-select --install`)
-  et Rust (`curl https://sh.rustup.rs -sSf | sh`).
 
 ## Utilisation
 
@@ -86,41 +83,6 @@ cargo build --release -p flir-viewer
 pousser un tag du même numéro (`git tag v0.1.0 && git push origin v0.1.0`).
 GitHub Actions lance les tests, construit le `.exe` et le `.deb`, et les
 attache à une Release.
-
-## macOS : créer l'application
-
-```sh
-cd flir-one-pc
-sh scripts/macos-app.sh            # crée target/macos/FLIR One PC.app
-sh scripts/macos-app.sh --install  # et la copie dans /Applications
-```
-
-L'application se lance ensuite depuis le Launchpad ou le Finder. Sur Mac,
-les captures vont par défaut dans `Documents/FLIR One PC`.
-
-Si l'édition de liens échoue avec « tapi error: unknown architecture »
-(SDK macOS plus récent que les Command Line Tools), le script choisit seul un
-SDK compatible ; pour `cargo` en direct :
-`export SDKROOT=$(xcrun --sdk macosx26.5 --show-sdk-path)` (ou un autre SDK
-présent dans `/Library/Developer/CommandLineTools/SDKs`).
-
-### macOS : limite actuelle
-
-Testé sur iMac M1 (macOS 26.6) : la caméra est ouverte et envoie ses messages
-d'état (batterie, `sledInformation`), mais pas d'images. Le noyau macOS
-intercepte la requête SET_INTERFACE « stream on » et bascule réellement
-l'interface en alt 1, qui ne déclare aucun endpoint : les canaux 0x83/0x85
-disparaissent (`pipe ref not recognized`, 0xe0004061). Revenir en alt 0
-recrée les canaux mais arrête le flux côté caméra (0x85 en STALL), et la
-caméra refuse les autres types de requête. C'est le même blocage que WinUSB
-sous Windows ; il n'y a pas d'équivalent d'UsbDk sur macOS.
-Diagnostic : `cargo run --release -p flir-usb --example mac_probe`.
-
-Un driver DriverKit ne contourne pas la limite (essai `macos/dext-probe`,
-SIP désactivé) : `DeviceRequest` refuse SET_INTERFACE
-(`kIOReturnNotPermitted`, 0xe00002e2) et `SelectAlternateSetting(1)` supprime
-lui aussi les canaux. Sur Mac, il faut donc passer par une autre machine
-(Linux ou Windows) reliée à la caméra.
 
 ## Visionneuse : fonctions
 
@@ -161,7 +123,7 @@ lui aussi les canaux. Sur Mac, il faut donc passer par une autre machine
 - **Captures nommées** : le champ « Nom des captures » (par exemple
   « Dossier n°54 Xbox Series X ») sert à nommer les dossiers, sous la forme
   `2026-10-10 14h32m05s - Dossier n°54 Xbox Series X`. Ils sont rangés dans
-  `captures/` à côté du logiciel (`Documents/FLIR One PC` sur Mac), ou dans
+  `captures/` à côté du logiciel, ou dans
   le dossier choisi avec
   « 📁 Choisir… » (« Ouvrir » l'affiche dans l'explorateur).
   - **📷 Image** : `image thermique.png` (avec réticule, points et

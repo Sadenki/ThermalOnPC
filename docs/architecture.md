@@ -136,9 +136,8 @@ Choix techniques :
    `CameraFiles.zip`, émissivité, offset).
 4. ~~**Analyse d'images**~~ : fait pour l'essentiel (captures PNG/CSV,
    vidéo, diagnostic par injection, superposition sur la photo).
-5. **Multiplateforme** : Windows validé ; macOS compile et s'installe mais
-   ne peut pas recevoir le flux (voir ci-dessous) ; binaires publiés par CI
-   à faire.
+5. ~~**Multiplateforme**~~ : Windows et Linux validés, paquets `.exe` et
+   `.deb`. macOS abandonné : il ne peut pas recevoir le flux (voir ci-dessous).
 6. **Pont réseau (plus tard)** : un intermédiaire branché à la caméra
    (Raspberry Pi ou PC Linux, ou PC Windows avec UsbDk) lit le flux et
    l'envoie par le réseau à la visionneuse, qui peut alors tourner sur un
