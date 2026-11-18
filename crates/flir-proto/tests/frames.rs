@@ -123,3 +123,26 @@ fn lepton_spotmeter_anchors_conversion() {
     let t = cal.raw_to_celsius(raw, &p);
     assert!((t - spot.celsius).abs() < 0.1, "{t} vs {spot:?}");
 }
+
+/// FLIR ONE Pro (micro-USB, Lepton 3.3, 160x120): a real thermal block of
+/// 243 VoSPI packets, 240 half-row image packets then 3 telemetry packets.
+#[test]
+fn decodes_pro_lepton3_block() {
+    let block = std::fs::read(concat!(env!("CARGO_MANIFEST_DIR"), "/tests/data/pro-thermal-block.bin")).unwrap();
+    assert_eq!(block.len(), 243 * 164);
+    let px = flir_proto::frame::decode_thermal(&block, 160, 120).unwrap();
+    assert_eq!(px.len(), 160 * 120);
+    let (min, max) = px.iter().fold((u16::MAX, 0), |(a, b), &v| (a.min(v), b.max(v)));
+    assert_eq!((min, max), (3624, 3899), "no stray telemetry or header words in the image");
+    assert_eq!((px[0], px[159], px[119 * 160 + 80]), (3688, 3742, 3702));
+}
+
+#[test]
+fn reads_pro_spotmeter() {
+    let block = std::fs::read(concat!(env!("CARGO_MANIFEST_DIR"), "/tests/data/pro-thermal-block.bin")).unwrap();
+    let thermal = flir_proto::frame::decode_thermal(&block, 160, 120).unwrap();
+    let f = flir_proto::Frame { width: 160, height: 120, thermal, thermal_block: block, jpeg: vec![], status: vec![] };
+    let spot = f.spotmeter().expect("Pro telemetry row C");
+    assert!((spot.celsius - 31.69).abs() < 0.01, "{}", spot.celsius);
+    assert!((spot.raw_mean - 3649.5).abs() < 0.01, "{}", spot.raw_mean);
+}

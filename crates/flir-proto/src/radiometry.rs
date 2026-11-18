@@ -19,6 +19,8 @@ pub struct Calibration {
 /// Counts of the FLIR One Planck model per Lepton raw count, measured on a
 /// Gen 3 by fitting the Lepton's own spotmeter readings (26–35 °C) against
 /// the raw counts under it. The Gen 2 value of 4 read ~7 °C too hot.
+/// A FLIR ONE Pro (Lepton 3.3) fits the same value: 4.907 over 16–55 °C
+/// (hot water, a cold can, a wall; 486 frames, residual 0.04 °C RMS).
 pub const LEPTON_RAW_SCALE: f64 = 4.91;
 
 impl Default for Calibration {

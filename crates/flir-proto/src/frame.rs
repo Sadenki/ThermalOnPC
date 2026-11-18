@@ -106,15 +106,19 @@ impl Frame {
     /// sends after the image rows. `None` when the frame has no telemetry
     /// or it does not look valid.
     pub fn spotmeter(&self) -> Option<Spotmeter> {
-        if self.width != GEN3_WIDTH {
-            return None;
-        }
         // Third telemetry packet (row C): words 50..58 hold the spot mean,
         // max and min in kelvin × 100, then its region (rows, columns).
-        let packet = self
-            .thermal_block
-            .chunks_exact(VOSPI_PACKET)
-            .find(|p| (u16::from_le_bytes([p[0], p[1]]) & 0x0fff) as usize == self.height + 2)?;
+        let packet = if self.width == GEN3_WIDTH {
+            self.thermal_block
+                .chunks_exact(VOSPI_PACKET)
+                .find(|p| (u16::from_le_bytes([p[0], p[1]]) & 0x0fff) as usize == self.height + 2)?
+        } else if self.width == 2 * GEN3_WIDTH {
+            // FLIR ONE Pro: the 3 telemetry packets follow the 2 × height
+            // image packets; row C is the third.
+            self.thermal_block.chunks_exact(VOSPI_PACKET).nth(2 * self.height + 2)?
+        } else {
+            return None;
+        };
         let word = |i: usize| u16::from_le_bytes([packet[4 + 2 * i], packet[5 + 2 * i]]) as usize;
         let (kelvin100, max, min) = (word(50), word(51), word(52));
         let (r0, c0, r1, c1) = (word(54), word(55), word(56), word(57));
@@ -170,7 +174,27 @@ pub fn decode_thermal(block: &[u8], width: usize, height: usize) -> Result<Vec<u
     if width == GEN3_WIDTH && block.len() % VOSPI_PACKET == 0 && block.len() / VOSPI_PACKET >= height {
         return Ok(decode_vospi(block, height));
     }
+    if width == 2 * GEN3_WIDTH && block.len() % VOSPI_PACKET == 0 && block.len() / VOSPI_PACKET >= 2 * height {
+        return Ok(decode_vospi_lepton3(block, height));
+    }
     decode_padded(block, width, height)
+}
+
+/// FLIR ONE Pro (Lepton 3.x, 160x120), checked on a
+/// micro-USB Pro on 18/11/2026: the block is 243 VoSPI packets, 240 image
+/// packets in order (row y = packets 2y and 2y+1, left half then right half;
+/// the packet counter restarts every 61 packets, so it is not used) followed
+/// by 3 telemetry packets.
+fn decode_vospi_lepton3(block: &[u8], height: usize) -> Vec<u16> {
+    let width = 2 * GEN3_WIDTH;
+    let mut out = vec![0u16; width * height];
+    for (i, packet) in block.chunks_exact(VOSPI_PACKET).take(2 * height).enumerate() {
+        let (row, x0) = (i / 2, (i % 2) * GEN3_WIDTH);
+        for (x, px) in packet[4..].chunks_exact(2).enumerate() {
+            out[row * width + x0 + x] = u16::from_le_bytes([px[0], px[1]]);
+        }
+    }
+    out
 }
 
 fn decode_vospi(block: &[u8], height: usize) -> Vec<u16> {

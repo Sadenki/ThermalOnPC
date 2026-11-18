@@ -504,6 +504,15 @@ impl FrameStream {
                     warn!("frame endpoint stalled, clearing");
                     self.handle.clear_halt(EP_FRAME)?;
                 }
+                // FLIR ONE Pro (micro-USB): the first reads after
+                // "stream on" can fail with a USB transaction error; retry for a
+                // while instead of giving up on the first one.
+                Err(rusb::Error::Io) if idle < GIVE_UP_AFTER => {
+                    warn!("frame read I/O error, retrying");
+                    let _ = self.handle.clear_halt(EP_FRAME);
+                    std::thread::sleep(Duration::from_millis(100));
+                    idle += Duration::from_millis(100);
+                }
                 Err(e) => return Err(e.into()),
             }
         }
